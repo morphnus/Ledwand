@@ -46,7 +46,7 @@ public:
     void FullWand();
     void AppendBuffer(char*, int);
     void AppendBufferLine();
-    void SetBuffer();
+    void SetBuffer(char*, int, int, int);
     void SendBuffer();
     void DDoS();
     void Kill();

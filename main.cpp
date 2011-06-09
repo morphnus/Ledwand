@@ -16,11 +16,12 @@ void help();
  * 
  */
 int main(int argc, char** argv) {
+    if (argc < 2)
+        help();
+
     LedWand ld("172.23.42.120", 2342);
     //ld.Do();
     //exit(0);
-    if (argc < 2)
-        help();
 
     if (strcmp(argv[1], "--hardreset") == 0)
         ld.HardReset();
@@ -65,9 +66,18 @@ int main(int argc, char** argv) {
         buffer[COLS] = '\0';
         int i = 0;
         int secs = 10;
+        char * title = 0;
+        int title_len = 0;
         if (argc >= 3)
             if (atoi(argv[2]) > 0)
                 secs = atoi(argv[2]);
+        if (argc >= 4) {
+            title = argv[3];
+            title_len = strlen(argv[3]);
+            if (title_len > COLS - 2)
+                title_len = COLS - 2;
+        }
+        int page = 0;
         while (1) {
             int len;
             char c;
@@ -84,9 +94,24 @@ int main(int argc, char** argv) {
             }
             ld.AppendBuffer(buffer, len);
             cout << buffer << endl;
-            if (i % (ROWS -1) == (ROWS -2)) {
+            if (i % (ROWS - 1) == (ROWS - 2)) {
+                page++;
                 ld.SendBuffer();
-                sleep(secs);
+                char page_s[3];
+                page_s[0] = page / 100 + 0x30;
+                page_s[1] = ((page / 10) % 10) + 0x30;
+                page_s[2] = page % 10 + 0x30;
+                ld.SendTextPos(page_s, 3, 53, ROWS - 1, 3, 1);
+                if (title != 0) {
+                    ld.SendTextPos(title, title_len, 0, 0, title_len, 1);
+                }
+                for (int i = secs; i > 0; i--) {
+                    char sec[2];
+                    sec[0] = i / 10 + 0x30;
+                    sec[1] = i % 10 + 0x30;
+                    ld.SendTextPos(sec, 2, 54, 0, 2, 1);
+                    sleep(1);
+                }
             }
             i++;
             ld.AppendBufferLine();

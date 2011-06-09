@@ -181,6 +181,13 @@ void LedWand::AppendBuffer(char* str, int len) {
     }
 }
 
+void LedWand::SetBufferPos(char* buf, int len, int x, int y) {
+//    int buffer_pos = (x + y * COLS - ((disp_buff_pos/ROWS)*ROWS) + COLS*ROWS)%COLS*ROWS;
+//    for (int i = buffer_pos; (i < buffer_pos + len) && (i < COLS * ROWS); i++) {
+//        display_buffer[i] = buf[i - buffer_pos];
+//    }
+}
+
 void LedWand::SendBuffer() {
     //SendTextPos(display_buffer, ROWS*COLS, 0, 0, COLS, ROWS);
     char sendbuff[ROWS * COLS];
